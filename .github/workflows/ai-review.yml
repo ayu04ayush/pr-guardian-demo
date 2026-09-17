@@ -1,0 +1,48 @@
+name: PR Guardian AI Code Review
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  pull-requests: write
+  issues: write
+  contents: read
+
+concurrency:
+  group: pr-guardian-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    name: Review PR with Gemini
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: scripts/package-lock.json
+
+      - name: Install Review Bot Dependencies
+        working-directory: ./scripts
+        run: npm ci --prefer-offline --no-audit || npm install --no-audit
+
+      - name: Run PR Guardian Review
+        working-directory: ./scripts
+        env:
+          # Secrets are injected exclusively as environment variables at runtime
+          # Never logged, printed, or exposed in repository files
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO_OWNER: ${{ github.repository_owner }}
+          REPO_NAME: ${{ github.event.repository.name }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-2.5-flash' }}
+        run: node review.js

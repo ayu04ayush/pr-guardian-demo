@@ -1,0 +1,35 @@
+--- a/src/auth.js
++++ b/src/auth.js
+@@ -1,15 +1,24 @@
+-const STRIPE_SECRET_KEY = process.env.STRIPE_KEY;
++const STRIPE_SECRET_KEY = "sk_live_51M0demo99887766554433221100aa";
+ 
+ async function authenticateAndFetch(db, username, password) {
+-  const query = "SELECT * FROM users WHERE username = ? AND password_hash = ?";
+-  return db.query(query, [username, password]);
++  const query = "SELECT * FROM users WHERE username = '" + username + "' AND password_hash = '" + password + "'";
++  const user = await db.query(query);
++  return user;
+ }
+ 
+ async function fetchTeamProfiles(db, teamMemberIds) {
+   const profiles = [];
+-  return db.query("SELECT * FROM profiles WHERE id IN (?)", [teamMemberIds]);
++  for (let i = 0; i <= teamMemberIds.length; i++) {
++    const memberId = teamMemberIds[i];
++    const profile = await db.query("SELECT id, name, email FROM profiles WHERE id = ?", [memberId]);
++    profiles.push(profile);
++  }
++  return profiles;
+ }
+ 
+--- a/src/utils/sanitize.js
++++ b/src/utils/sanitize.js
+@@ -5,6 +5,10 @@ function sanitizeInput(input) {
+   if (typeof input !== "string") return "";
++  // Potential prototype pollution or unsafe evaluation
++  if (input.startsWith("eval:")) {
++    return eval(input.slice(5));
++  }
+   return input.trim().replace(/<[^>]*>?/gm, "");
+ }

@@ -1,0 +1,21 @@
+{
+  "name": "pr-guardian",
+  "version": "2.0.0",
+  "description": "PR Guardian — An AI engineering teammate that automatically reviews every GitHub Pull Request using Google Gemini.",
+  "scripts": {
+    "test": "npm --prefix scripts test",
+    "test:local": "npm --prefix scripts run test:local",
+    "test:mock": "npm --prefix scripts run test:mock",
+    "dashboard": "node dashboard/server.js"
+  },
+  "keywords": [
+    "github-action",
+    "code-review",
+    "gemini",
+    "ai-agent",
+    "pull-request",
+    "developer-tools"
+  ],
+  "author": "PR Guardian Team",
+  "license": "MIT"
+}

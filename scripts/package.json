@@ -1,0 +1,17 @@
+{
+  "name": "pr-guardian-scripts",
+  "version": "2.0.0",
+  "private": true,
+  "description": "AI engineering teammate that automatically reviews GitHub Pull Requests using Google Gemini.",
+  "main": "review.js",
+  "scripts": {
+    "review": "node review.js",
+    "test:local": "node local-test.js",
+    "test:mock": "node local-test.js --mock",
+    "test": "node local-test.js --mock"
+  },
+  "dependencies": {
+    "@google/genai": "^1.30.0",
+    "@octokit/rest": "^20.1.1"
+  }
+}

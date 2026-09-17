@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PR Guardian — AI Code Review Dashboard</title>
+  <meta name="description" content="AI engineering teammate that automatically reviews every GitHub Pull Request using Google Gemini.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="brand">
+      <span class="brand-icon">🛡️</span>
+      <span class="brand-title">PR Guardian</span>
+      <span class="brand-badge">Automated AI Teammate</span>
+    </div>
+    <div class="nav-actions">
+      <div class="model-tag">
+        <span class="pulse-dot"></span>
+        <span>Engine: <strong>Google Gemini 2.5 Flash</strong></span>
+      </div>
+      <a href="https://github.com" target="_blank" class="btn-secondary" style="text-decoration:none;">
+        GitHub Workflow Active
+      </a>
+    </div>
+  </header>
+
+  <!-- Hero Banner -->
+  <section class="hero">
+    <p class="hero-tagline">
+      <strong>PR Guardian</strong> lives directly inside your GitHub Pull Request workflow. It fetches changed diffs, analyzes logic, security, performance, and code quality using Google Gemini, and posts actionable inline annotations with duplicate-proof re-reviews.
+    </p>
+  </section>
+
+  <!-- Top Metric Cards -->
+  <section class="metrics-grid" id="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-header">
+        <span>PRs Reviewed</span>
+        <span>📊</span>
+      </div>
+      <div class="metric-value" id="val-total-prs">18</div>
+      <div class="metric-footer">100% automated via GitHub Actions</div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-header">
+        <span>Issues Caught</span>
+        <span>🛡️</span>
+      </div>
+      <div class="metric-value" id="val-total-issues">47</div>
+      <div class="metric-footer">Before reaching production</div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-header">
+        <span class="sev-critical">Critical / High</span>
+        <span>🔴</span>
+      </div>
+      <div class="metric-value sev-critical" id="val-crit-high">14</div>
+      <div class="metric-footer">Vulnerabilities & game-breaking bugs</div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-header">
+        <span>Spam Prevented</span>
+        <span>⚡</span>
+      </div>
+      <div class="metric-value" id="val-dedup-count">32</div>
+      <div class="metric-footer">Duplicate comments avoided on re-push</div>
+    </div>
+  </section>
+
+  <!-- Tabs Navigation -->
+  <main class="tab-container">
+    <div class="tabs-nav" role="tablist">
+      <button class="tab-btn active" data-tab="tab-reviews" id="btn-tab-reviews">
+        <span>📋</span> Pull Request Reviews
+      </button>
+      <button class="tab-btn" data-tab="tab-sandbox" id="btn-tab-sandbox">
+        <span>⚡</span> Live Diff Sandbox
+      </button>
+      <button class="tab-btn" data-tab="tab-architecture" id="btn-tab-architecture">
+        <span>📐</span> Architecture & Workflow
+      </button>
+    </div>
+
+    <!-- TAB 1: PR REVIEWS & FINDINGS -->
+    <div class="tab-content active" id="tab-reviews">
+      <div class="dashboard-grid">
+        <!-- Left: PR Feed -->
+        <div class="card">
+          <div class="card-header">
+            <span>Recent Pull Requests</span>
+            <span class="badge badge-category">Live Repository Feed</span>
+          </div>
+          <div class="pr-list" id="pr-list">
+            <!-- Rendered by app.js -->
+          </div>
+        </div>
+
+        <!-- Right: Selected PR Inspection & Inline Comments -->
+        <div class="card">
+          <div class="card-header">
+            <span id="selected-pr-title">PR #42 — Analysis Details</span>
+            <span class="badge badge-category" id="selected-pr-status">Status: Reviewed</span>
+          </div>
+          <div class="card-body">
+            <div id="pr-summary-box" style="margin-bottom: 18px;">
+              <!-- Summary markdown simulation -->
+            </div>
+
+            <h4 style="color: var(--text-bright); margin-bottom: 12px;">Inline Annotations Posted</h4>
+            <div id="pr-findings-list">
+              <!-- Findings rendered by app.js -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: LIVE DIFF SANDBOX -->
+    <div class="tab-content" id="tab-sandbox">
+      <div class="dashboard-grid">
+        <!-- Sandbox Inputs -->
+        <div class="card">
+          <div class="card-header">
+            <span>Interactive Diff Tester</span>
+            <span>Simulate PR Guardian</span>
+          </div>
+          <div class="card-body">
+            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px;">
+              Paste any unified git diff below or select a preloaded test fixture to see how PR Guardian validates lines, detects issues, formats inline comments, and compiles the PR summary.
+            </p>
+
+            <div class="sandbox-controls">
+              <label for="sample-select" style="font-size: 12px; color: var(--text-secondary);">Load Fixture:</label>
+              <select id="sample-select" class="select-input">
+                <option value="vulnerable">Auth Service (Hardcoded Secret + SQLi + N+1)</option>
+                <option value="boundary">Array Boundary (Off-by-one + Unhandled Rejection)</option>
+                <option value="clean">Remediated Auth (All Issues Fixed)</option>
+              </select>
+              <button id="btn-run-sim" class="btn-primary">▶ Run Guardian Review</button>
+            </div>
+
+            <textarea id="sandbox-diff-input" class="diff-input" placeholder="Paste git diff here..."></textarea>
+          </div>
+        </div>
+
+        <!-- Sandbox Output -->
+        <div class="card">
+          <div class="card-header">
+            <span>Review Output Simulation</span>
+            <span class="badge badge-category" id="sim-status">Ready</span>
+          </div>
+          <div class="card-body" id="sandbox-output">
+            <p style="color: var(--text-secondary); font-size: 13px;">
+              Click <strong>"Run Guardian Review"</strong> to trigger analysis and view generated GitHub PR comments.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: ARCHITECTURE & WORKFLOW -->
+    <div class="tab-content" id="tab-architecture">
+      <div class="card">
+        <div class="card-header">
+          <span>PR Guardian End-to-End Workflow Architecture</span>
+          <span class="badge badge-category">Zero-Chatbot Automation</span>
+        </div>
+        <div class="card-body">
+          <p style="margin-bottom: 16px; color: var(--text-secondary);">
+            PR Guardian transforms AI from a manual "copy-paste chatbot" into an autonomous engineering teammate that participates natively in GitHub code reviews.
+          </p>
+
+          <pre class="code-block" style="font-size: 13px; line-height: 1.6; padding: 20px;">
+  +-----------------------------------------------------------------------------------+
+  |                                 DEVELOPER WORKFLOW                                |
+  |                                                                                   |
+  |  1. Developer pushes code to feature branch & opens GitHub Pull Request          |
+  +-----------------------------------------+-----------------------------------------+
+                                            |
+                                            v
+  +-----------------------------------------------------------------------------------+
+  |                        GITHUB ACTIONS CI/CD TRIGGER                               |
+  |                                                                                   |
+  |  - Event: pull_request [opened, reopened, synchronize]                            |
+  |  - Concurrency group cancels obsolete runs when new commits arrive                |
+  |  - Least-privilege permissions: pull-requests: write, issues: write, contents: read|
+  +-----------------------------------------+-----------------------------------------+
+                                            |
+                                            v
+  +-----------------------------------------------------------------------------------+
+  |                           PR GUARDIAN DIFF EXTRACTION                             |
+  |                                                                                   |
+  |  - Retrieves ONLY changed files & patch hunks (not the whole repository)          |
+  |  - Ignores package-lock.json, binary files, minified bundles, deleted files       |
+  |  - Computes valid '+' line anchors to ensure GitHub API 422 errors never occur    |
+  +-----------------------------------------+-----------------------------------------+
+                                            |
+                                            v
+  +-----------------------------------------------------------------------------------+
+  |                      GOOGLE GEMINI STRUCTURED ANALYSIS                            |
+  |                                                                                   |
+  |  - Model: Google Gemini 2.5 Flash (configurable via GEMINI_MODEL)                |
+  |  - Strict JSON schema: summary, findings (CRITICAL/HIGH/MED/LOW, BUG/SEC/PERF/QLTY)|
+  |  - Automated retry with exponential backoff on transient errors                   |
+  +-----------------------------------------+-----------------------------------------+
+                                            |
+                                            v
+  +-----------------------------------------------------------------------------------+
+  |                    FINGERPRINTING & DEDUPLICATION ENGINE                          |
+  |                                                                                   |
+  |  - Generates SHA-256 fingerprint from: file + category + title + explanation      |
+  |  - Compares against existing comments on PR                                       |
+  |  - New issues -> posted inline. Unchanged existing issues -> skipped (NO SPAM!)   |
+  +-----------------------------------------+-----------------------------------------+
+                                            |
+                                            v
+  +-----------------------------------------------------------------------------------+
+  |                             GITHUB PR NOTIFICATION                                |
+  |                                                                                   |
+  |  - Detailed inline review comments attached directly to the offending line        |
+  |  - Exactly ONE top-level summary comment updated across all commit cycles         |
+  +-----------------------------------------------------------------------------------+
+          </pre>
+
+          <div class="cat-breakdown" style="margin-top: 24px;">
+            <h4 style="color: var(--text-bright); margin-bottom: 8px;">Analysis Dimensions</h4>
+            <div class="cat-row">
+              <span class="cat-label">🐛 <strong>Bugs</strong></span>
+              <div class="progress-track"><div class="progress-fill" style="width: 85%; background: var(--accent-orange);"></div></div>
+              <span>Logic errors, null/undefined checks, race conditions, edge cases</span>
+            </div>
+            <div class="cat-row">
+              <span class="cat-label">🔐 <strong>Security</strong></span>
+              <div class="progress-track"><div class="progress-fill" style="width: 95%; background: var(--accent-red);"></div></div>
+              <span>Hardcoded tokens, SQL/Command injection, insecure auth, data leaks</span>
+            </div>
+            <div class="cat-row">
+              <span class="cat-label">⚡ <strong>Performance</strong></span>
+              <div class="progress-track"><div class="progress-fill" style="width: 70%; background: #e3b341;"></div></div>
+              <span>N+1 query loops, unbounded memory, blocking synchronous calls</span>
+            </div>
+            <div class="cat-row">
+              <span class="cat-label">🧹 <strong>Quality</strong></span>
+              <div class="progress-track"><div class="progress-fill" style="width: 60%; background: var(--accent-blue);"></div></div>
+              <span>High complexity, duplicate code, unhandled error cases</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
