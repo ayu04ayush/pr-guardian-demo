@@ -41,3 +41,8 @@ module.exports = {
   authenticateAndFetch,
   fetchTeamProfiles,
 };
+function testBug(user) {
+    return user.name;
+}
+
+const secret = "test-secret-123";
