@@ -4,8 +4,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-Automated_Review-2088FF?logo=github-actions&logoColor=white)](.github/workflows/ai-review.yml)
-[![AI Engine](https://img.shields.io/badge/AI_Engine-Google_Gemini_2.5_Flash-8E75B2?logo=google&logoColor=white)](https://ai.google.dev/)
-[![Node.js](https://img.shields.io/badge/Node.js-20.x-339933?logo=nodedotjs&logoColor=white)](package.json)
+[![AI Engine](https://img.shields.io/badge/AI_Engine-Google_Gemini_3.6_Flash-8E75B2?logo=google&logoColor=white)](https://ai.google.dev/)
+[![Node.js](https://img.shields.io/badge/Node.js-24.x-339933?logo=nodedotjs&logoColor=white)](package.json)
 
 ---
 
